@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thika LemonPunch Activation Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="bg-[#800000] text-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-3xl font-bold text-yellow-300 mb-2">Thika LemonPunch Activation</h1>
+            <p class="text-yellow-100 opacity-90">A dynamic database to manage activation records.</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+            <div class="relative w-full sm:w-auto">
+                <input type="text" id="searchInput" class="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Search records...">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <button id="add-new-btn" class="w-full sm:w-auto bg-[#800000] text-white font-semibold py-2 px-6 rounded-lg hover:bg-[#660000] transition duration-300 shadow-md">
+                Add New Record
+            </button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-white rounded-lg shadow-lg overflow-x-auto">
+            <table class="w-full text-left table-sortable">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-4 font-semibold text-gray-700" data-sort="name">Name</th>
+                        <th class="p-4 font-semibold text-gray-700" data-sort="id_no">ID No.</th>
+                        <th class="p-4 font-semibold text-gray-700" data-sort="phone_no">Phone No.</th>
+                        <th class="p-4 font-semibold text-gray-700" data-sort="outlet_name">Outlet Name</th>
+                        <th class="p-4 font-semibold text-gray-700" data-sort="outlet_location">Outlet Location</th>
+                        <th class="p-4 font-semibold text-gray-700">Samples</th>
+                        <th class="p-4 font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                    <!-- Rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <div id="loading" class="p-4 text-center text-gray-500">Loading data...</div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="entry-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden modal overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg my-8">
+            <h2 id="modal-title" class="text-2xl font-bold text-gray-800 mb-6">Add New Record</h2>
+            <form id="entry-form">
+                <input type="hidden" id="entry-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" id="name" name="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label for="id_no" class="block text-sm font-medium text-gray-700">ID No.</label>
+                        <input type="text" id="id_no" name="id_no" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label for="phone_no" class="block text-sm font-medium text-gray-700">Phone No.</label>
+                        <input type="tel" id="phone_no" name="phone_no" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label for="outlet_name" class="block text-sm font-medium text-gray-700">Outlet Name</label>
+                        <input type="text" id="outlet_name" name="outlet_name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                </div>
+                 <div class="mb-6">
+                    <label for="outlet_location" class="block text-sm font-medium text-gray-700">Outlet Location</label>
+                    <input type="text" id="outlet_location" name="outlet_location" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700">Samples</label>
+                    <div id="samples-preview" class="mt-2 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <!-- Existing samples will be shown here -->
+                    </div>
+                    <div class="mt-4 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            <div class="flex text-sm text-gray-600">
+                                <label for="samples-input" class="relative cursor-pointer bg-white rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
+                                    <span>Upload files</span>
+                                    <input id="samples-input" name="samples-input" type="file" class="sr-only" multiple accept="image/*,video/*,audio/*">
+                                 </label>
+                                <p class="pl-1">or drag and drop</p>
+                            </div>
+                            <p class="text-xs text-gray-500">Images, Videos, Audio up to 10MB</p>
+                        </div>
+                    </div>
+                     <div id="new-samples-preview" class="mt-4 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+                </div>
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancel-btn" class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300">Cancel</button>
+                    <button type="submit" class="bg-yellow-500 text-[#800000] font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition duration-300">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden modal">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-sm text-center">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h2>
+            <p class="text-gray-600 mb-6">Are you sure you want to delete this record? This action cannot be undone.</p>
+            <div class="flex justify-center gap-4">
+                <button id="cancel-delete-btn" class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300">Cancel</button>
+                <button id="confirm-delete-btn" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Media Modal -->
+    <div id="view-media-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden modal z-50">
+        <div class="relative bg-white p-4 rounded-lg">
+            <button id="close-media-modal-btn" class="absolute -top-3 -right-3 bg-white text-black rounded-full w-8 h-8 flex items-center justify-center text-2xl z-10">&times;</button>
+            <div id="media-content" class="max-w-[90vw] max-h-[90vh]"></div>
+        </div>
+    </div>
+    
+    <script type="module" src="script.js"></script>

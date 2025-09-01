@@ -1,0 +1,17 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f6e05e; /* Yellow base */
+    background-image: radial-gradient(at 0% 100%, hsla(0, 100%, 25%, 0.4) 0px, transparent 50%), 
+                      radial-gradient(at 100% 0%, hsla(51, 100%, 50%, 0.5) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+.modal {
+    transition: opacity 0.3s ease;
+}
+.table-sortable th {
+    cursor: pointer;
+}
+.table-sortable th:hover {
+    background-color: #e5e7eb;
+}
